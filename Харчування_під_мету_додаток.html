@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Розквітай · Харчування під мету — День 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F9EFF0; --ink:#3D2733; --ink-soft:#7A6270;
+    --rose:#B4566C; --rose-soft:#E7C3CC;
+    --sage:#7C9082; --gold:#C9A227; --wheat:#C9A45C; --blue:#7A87A8; --plum:#8E5A74;
+    --card:#FFFFFF; --radius:22px;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:'Manrope',system-ui,sans-serif;background:var(--bg);color:var(--ink);
+    min-height:100vh;display:flex;justify-content:center;line-height:1.55}
+  .app{width:100%;max-width:440px;padding:22px 18px 44px;display:flex;flex-direction:column;min-height:100vh}
+  .eyebrow{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--rose);font-weight:700;text-align:center}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:29px;text-align:center;margin:6px 0 4px;line-height:1.15}
+  .sub{text-align:center;color:var(--ink-soft);font-size:14px;max-width:340px;margin:0 auto}
+  .flower-wrap{display:flex;justify-content:center;margin:12px 0 2px}
+  .petal{fill:var(--rose)}.core{fill:var(--gold)}
+  .screen{display:none;flex-direction:column;flex:1}
+  .screen.active{display:flex;animation:fadeUp .4s ease}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion: reduce){.screen.active{animation:none}}
+  .card{background:var(--card);border-radius:var(--radius);padding:19px 17px;box-shadow:0 10px 30px rgba(61,39,51,.07);margin-top:13px}
+  .frame{background:var(--rose);color:#fff;border-radius:18px;padding:15px 17px;margin-top:13px;font-size:12.8px}
+  .frame b{display:block;letter-spacing:.06em;margin-bottom:5px;font-size:12.5px}
+  .goal-btn{display:flex;align-items:center;gap:13px;width:100%;text-align:left;background:#fff;
+    border:1.5px solid #F0E2E6;border-radius:16px;padding:13px 14px;margin-bottom:9px;cursor:pointer;
+    font-family:'Manrope';color:var(--ink);transition:border-color .15s}
+  .goal-btn:hover{border-color:var(--rose-soft)}
+  .goal-btn:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .g-dot{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px}
+  .g-name{font-weight:700;font-size:14.5px}
+  .g-desc{font-size:11.5px;color:var(--ink-soft)}
+  /* екран мети */
+  .hero{border-radius:var(--radius);padding:20px 19px;margin-top:13px;color:#fff}
+  .hero .tag{font-size:10.5px;letter-spacing:.18em;font-weight:700;text-transform:uppercase;opacity:.9}
+  .hero .name{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;margin-top:2px}
+  .hero .essence{font-size:13.5px;margin-top:10px;background:rgba(255,255,255,.16);border-radius:12px;padding:10px 13px}
+  .sec-title{font-size:11px;letter-spacing:.13em;text-transform:uppercase;font-weight:700;margin-bottom:9px}
+  .freq{border-radius:14px;padding:11px 13px;margin-bottom:9px;font-size:13px}
+  .freq b{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-bottom:3px}
+  .freq.often{background:#EFF3EE}.freq.often b{color:var(--sage)}
+  .freq.some{background:#F7F0E3}.freq.some b{color:var(--wheat)}
+  .freq.rare{background:#F8ECEF}.freq.rare b{color:var(--rose)}
+  .freq-note{font-size:11px;color:var(--ink-soft);margin-top:2px}
+  .reg-item{display:flex;gap:9px;font-size:13.3px;margin-bottom:8px;align-items:flex-start}
+  .reg-item .b{flex:0 0 7px;height:7px;border-radius:50%;margin-top:6px}
+  /* тарілки */
+  .plate{margin-bottom:13px}
+  .plate-name{font-size:12.5px;font-weight:700;margin-bottom:5px;display:flex;justify-content:space-between}
+  .plate-name span:last-child{font-weight:500;color:var(--ink-soft);font-size:11.5px}
+  .bar{display:flex;height:26px;border-radius:9px;overflow:hidden}
+  .bar div{display:flex;align-items:center;justify-content:center;color:#fff;font-size:10.5px;font-weight:700;min-width:34px}
+  .bar .veg{background:var(--sage)}.bar .prot{background:var(--rose)}.bar .carb{background:var(--wheat)}
+  .legend{display:flex;gap:14px;font-size:11px;color:var(--ink-soft);margin-top:10px;flex-wrap:wrap}
+  .legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px}
+  .fat-note{font-size:11.5px;color:var(--ink-soft);margin-top:8px}
+  .dish{background:#FDF9FA;border:1px solid #F3E4E9;border-radius:14px;padding:10px 13px;margin-bottom:8px}
+  .dish-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+  .dish-name{font-weight:700;font-size:13.3px}
+  .dish-meal{font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-soft);white-space:nowrap}
+  .dish-desc{font-size:11.8px;color:var(--ink-soft);margin-top:2px}
+  .imp{background:#F1E6DE;border-radius:16px;padding:14px 15px;margin-top:13px;font-size:12.7px}
+  .imp b{display:block;font-size:11px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink);margin-bottom:6px}
+  .imp .li{display:flex;gap:8px;margin-bottom:6px}
+  .imp .li::before{content:"⚠";flex:0 0 auto;color:var(--rose)}
+  .switcher{display:flex;gap:6px;margin-top:13px;flex-wrap:wrap}
+  .sw{border:1.5px solid #F0E2E6;border-radius:11px;padding:7px 10px;font-family:'Manrope';font-weight:700;
+    font-size:11px;cursor:pointer;background:#fff;color:var(--ink-soft)}
+  .sw.on{color:#fff}
+  .btn{margin-top:13px;width:100%;padding:15px;border:none;border-radius:16px;background:var(--ink);color:#fff;
+    font-family:'Manrope';font-size:15.5px;font-weight:600;cursor:pointer}
+  .btn.ghost{background:transparent;color:var(--ink-soft);font-weight:500;padding:10px;margin-top:6px}
+  .btn:focus-visible,.sw:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+  .footer-note{margin-top:20px;font-size:11.5px;color:var(--ink-soft);text-align:center;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ЕКРАН ВИБОРУ -->
+  <section class="screen active" id="s-pick">
+    <div class="eyebrow">Розквітай · День 15 · Додаток</div>
+    <h1>Харчування під мету</h1>
+    <p class="sub">обери свою ситуацію — і отримай орієнтири: що часто, що іноді, режим, тарілку і страви</p>
+    <div class="flower-wrap">
+      <svg width="88" height="88" viewBox="0 0 120 120" aria-hidden="true"><g id="pf"></g><circle class="core" cx="60" cy="60" r="11"/></svg>
+    </div>
+    <div class="frame">
+      <b>ЧЕСНА РАМКА — ПРОЧИТАЙ ПЕРШОЮ</b>
+      Це освітні орієнтири, а не медичні призначення. «Майже ніколи» — про частоту, а не про заборону і провину. Розділи «Вагітність» і «Хвороба» — лише в парі з лікарем. І скрізь діє наше правило: план пропонує — тіло вирішує.
+    </div>
+    <div class="card" id="goalList"></div>
+  </section>
+
+  <!-- ЕКРАН МЕТИ -->
+  <section class="screen" id="s-goal">
+    <div class="eyebrow">Розквітай · День 15 · твоя мета</div>
+    <div class="switcher" id="switcher"></div>
+    <div class="hero" id="hero">
+      <div class="tag" id="gTag"></div>
+      <div class="name" id="gName"></div>
+      <div class="essence" id="gEssence"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" id="tFreq">ЧАСТО · ІНОДІ · МАЙЖЕ НІКОЛИ</div>
+      <div class="freq often"><b>Часто</b><span id="fOften"></span></div>
+      <div class="freq some"><b>Іноді</b><span id="fSome"></span></div>
+      <div class="freq rare" style="margin-bottom:2px"><b>Майже ніколи</b><span id="fRare"></span>
+        <div class="freq-note">← це про частоту, не про заборону: з'їла — без провини, просто нечасто</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" id="tReg">РЕЖИМ ХАРЧУВАННЯ</div>
+      <div id="gReg"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" id="tPlate">ТАРІЛКА: ПРОПОРЦІЇ ПО ПРИЙОМАХ</div>
+      <div id="gPlates"></div>
+      <div class="legend">
+        <span><i style="background:var(--sage)"></i>овочі й зелень</span>
+        <span><i style="background:var(--rose)"></i>білок</span>
+        <span><i style="background:var(--wheat)"></i>складні вуглеводи</span>
+      </div>
+      <div class="fat-note" id="gFat"></div>
+    </div>
+
+    <div class="card">
+      <div class="sec-title" id="tDish">ПРИКЛАДИ СТРАВ (із конструктора, День 18)</div>
+      <div id="gDishes"></div>
+    </div>
+
+    <div class="imp"><b>⚠ Важливо</b><div id="gImp"></div></div>
+
+    <button class="btn ghost" onclick="go('s-pick')">← обрати іншу мету</button>
+    <p class="footer-note">«Розквітай» — освітня програма, не медична консультація.<br>Індивідуальні стани, діагнози, вагітність — усе узгоджується з твоїм лікарем.</p>
+  </section>
+
+</div>
+
+<script>
+/* ---------- ДАНІ ЦІЛЕЙ ---------- */
+const GOALS = {
+
+ slim:{ hex:"#B4566C", ic:"🌿", tag:"М'ЯКО І БЕЗ ГОЙДАЛОК", name:"М'яке зниження ваги",
+  pick:"ситий мінус без голоду і зривів",
+  essence:"Мета — не «мінус кілограми за тиждень», а стабільний, СИТИЙ мінус. Голод — головний ворог цієї мети: він завжди повертається вечірнім «жором». Тому працюємо не через «менше їсти», а через склад тарілки.",
+  often:"овочі й зелень до половини тарілки · білок у КОЖЕН прийом · вода · повільні вуглеводи (гречка, вівсянка, картопля в мундирі) · ягоди і фрукти",
+  some:"цільнозерновий хліб · паста · горіхи (жменя — корисні, але щільні) · твердий сир · десерт після їжі, з'їдений смачно",
+  rare:"солодкі напої та «рідкі калорії» (лате з сиропом) — найлегший пункт для старту · фритюр · алкоголь часто",
+  reg:["3 основні прийоми + 1 перекус — БЕЗ пропусків: пропущений обід = вечірній жор",
+       "Вечеря повноцінна (не «кефірчик і страждання»), за 2–3 години до сну",
+       "Фізично менша тарілка — працює краще за силу волі",
+       "Стоп-пауза (Д5) — твій головний інструмент у моменти «хочу заїсти»"],
+  plates:[["Сніданок",[30,40,30],"білковий якір — тримає пів дня"],
+          ["Обід",[50,25,25],"класична здорова тарілка"],
+          ["Вечеря",[50,35,15],"більше овочів і білка, менше вуглеводів"]],
+  fat:"+ жир у кожен прийом потроху: ложка олії, кілька горіхів — він дає ситість.",
+  dishes:[["Омлет зі шпинатом і сиром","сніданок","2–3 яйця + шпинат + сир; помідор поруч","★Б"],
+          ["Сирники з йогуртом і ягодами","сніданок","білково і смачно","★Б"],
+          ["Куряче філе з булгуром","обід","філе + булгур + великий салат","★Б"],
+          ["Запечена риба з картоплею","обід","усе на одному деку","★Б"],
+          ["Теплий салат із куркою","вечеря","листя + тепла курка + печені овочі","★Б"],
+          ["Варене яйце + огірок","перекус","найшвидший білковий перекус","★Б"]],
+  imp:["Темп: повільно — це і є правильно. Швидкий мінус майже завжди повертається з бонусом.",
+       "Вага «стоїть»? Спершу подивись на сон і стрес (Д5, Д12) — вони впливають більше, ніж здається.",
+       "Якщо в минулому були розлади харчової поведінки — цю мету бери ТІЛЬКИ з фахівцем, не самостійно.",
+       "Жодних «розвантажень» і голодувань — особливо в «зимову» фазу (Д9)."]},
+
+ gain:{ hex:"#7C9082", ic:"🌾", tag:"ЩІЛЬНІСТЬ, А НЕ ОБ'ЄМ", name:"Набір ваги",
+  pick:"набрати м'яко, без насильства над ШКТ",
+  essence:"Мета — набрати тканини (м'язи, ресурс), а не втомити шлунок. Секрет — калорійно-КОРИСНА їжа: додаємо щільність у звичні страви, а не змушуємо себе їсти вдвічі більше.",
+  often:"горіхи і горіхова паста · авокадо · олія щедро · сухофрукти, банани · крупи · м'ясо, риба, яйця · повножирне молочне · смузі",
+  some:"домашня випічка · десерти · вершкові соуси",
+  rare:"«пусті об'ємні» калорії: газовані напої літрами, фастфуд щодня — вони збивають апетит і б'ють по ШКТ",
+  reg:["3 основні + 2–3 перекуси — за годинником, не чекаючи голоду",
+       "Рідкі калорії — твій друг: смузі (банан + йогурт + горіхова паста) п'ється легше, ніж їсться",
+       "Не пий багато води БЕЗПОСЕРЕДНЬО перед їжею — вона займає місце",
+       "У кожну звичну страву — «+1 щільність»: ложка олії, жменя горіхів, сир зверху"],
+  plates:[["Сніданок",[20,30,50],"вуглеводи + жири — енергія на день"],
+          ["Обід",[25,35,40],"повна тарілка, білок обов'язково"],
+          ["Вечеря",[30,35,35],"повноцінна, без «полегшень»"]],
+  fat:"+ жири — головний інструмент набору: олія, горіхи, авокадо в кожен прийом щедро.",
+  dishes:[["Вівсянка з бананом і горіхами","сніданок","+ ложка горіхової пасти зверху","★Mg"],
+          ["Плов із куркою","обід","ситно і зручно готувати на кілька днів",""],
+          ["Паста з індичкою та овочами","обід","цільнозернова + сир зверху","★Б"],
+          ["Тушкована яловичина з кашею","вечеря","білок + залізо + вуглеводи","★Fe ★Б"],
+          ["Смузі «набір»","перекус","банан + йогурт + горіхова паста + вівсянка","★Б"],
+          ["Жменя горіхів + сухофрукти","перекус","щільний кишеньковий перекус","★Mg"]],
+  imp:["Якщо вага падає сама, без причини, — спершу до лікаря (щитоподібна, ШКТ, феритин), потім тарілка.",
+       "Додай м'які силові (Д13, Д15) — щоб набиралися м'язи, а не лише запаси.",
+       "Темп +0,25–0,5 кг на тиждень — здоровий. Швидше не треба."]},
+
+ tone:{ hex:"#C9A227", ic:"💪", tag:"БІЛОК + СИЛОВІ + ТЕРПІННЯ", name:"Рельєф і тонус",
+  pick:"підтягнутість без «сушок»",
+  essence:"Рельєф робиться в залі, а проявляється на кухні. Формула проста: достатньо білка + силові навантаження + місяці, а не тижні. Жорсткі «сушки» сюди не входять — вони ламають цикл, сон і настрій.",
+  often:"білок у КОЖЕН прийом (яйця, м'ясо, риба, сир, бобові) · овочі · повільні вуглеводи довкола тренувань · вода",
+  some:"десерти — рельєф не вимагає аскези · хліб, паста",
+  rare:"алкоголь часто (б'є по відновленню м'язів) · «сушки» з різким дефіцитом",
+  reg:["3 основні + 1 перекус; білкова порція — ПІСЛЯ тренування",
+       "Вуглеводи — ДО тренування (за 1,5–2 год) і в дні навантажень більше",
+       "Не тренуйся голодною — тіло без палива не будує",
+       "У дні відпочинку — трохи менше вуглеводів, стільки ж білка"],
+  plates:[["Сніданок",[25,40,35],"білковий старт"],
+          ["Обід",[40,30,30],"збалансовано, вуглеводи за тренуванням"],
+          ["Вечеря",[45,35,20],"білок для нічного «ремонту» м'язів"]],
+  fat:"+ жири помірно і стабільно: олія, горіхи, жирна риса 2 р/тиждень.",
+  dishes:[["Сирники з йогуртом","сніданок","білковий чемпіон сніданків","★Б"],
+          ["Гречана каша з яйцем","сніданок","вуглеводи + білок перед активним днем","★Fe ★Mg ★Б"],
+          ["Куряче філе з булгуром","обід","класика тонусу","★Б"],
+          ["Салат із тунцем, яйцем і квасолею","обід","білок із трьох джерел","★Fe ★Б"],
+          ["Риба на пару з броколі","вечеря","легко і білково","★Б"],
+          ["Сир із фруктом","перекус","ідеально після тренування","★Б"]],
+  imp:["«Перекачатися» випадково жінці неможливо — для цього потрібні роки цілеспрямованої роботи. Силові = тонус.",
+       "Рельєф будується місяцями. Якщо хтось обіцяє «за 2 тижні» — це про фотошоп або про здоров'я, яким заплатять.",
+       "Цикл зник або «поплив» на тлі тренувань і обмежень → стоп і до лікаря: це червоний прапорець (Д13)."]},
+
+ preg:{ hex:"#8E5A74", ic:"🤍", tag:"У ПАРІ З ЛІКАРЕМ", name:"Вагітність",
+  pick:"їсти для двох, а не за двох",
+  essence:"Не «їж за двох» — їж ДЛЯ двох: якість важливіша за кількість. Усе на цьому екрані — загальні орієнтири; головні рішення ухвалює лікар, який веде твою вагітність.",
+  often:"білок щодня · овочі та фрукти · кисломолочне (кальцій) · цільні крупи · продукти із залізом + вітамін С поруч · запечена/варена риба 1–2 р/тиждень · вода",
+  some:"солодке · кава (зазвичай до 1–2 чашок — узгодь із лікарем)",
+  rare:"тут це справді «уникати»: сире/напівсире м'ясо, риба, яйця (тартар, суші з сирою рибою) · непастеризовані сири й молоко · алкоголь — зовсім",
+  reg:["Нудота? Часто і потроху — сухарик біля ліжка ще до підйому працює",
+       "Не голодувати довго: маленькі перекуси кожні 2–3 години",
+       "Вода — постійно, маленькими порціями",
+       "Печія в 3 триместрі → менші порції, не лягати одразу після їжі"],
+  plates:[["Сніданок",[30,35,35],"білок + вуглеводи проти нудоти"],
+          ["Обід",[40,30,30],"звичайна здорова тарілка"],
+          ["Вечеря",[40,35,25],"легша, але повноцінна"]],
+  fat:"+ корисні жири щодня (олія, горіхи, авокадо) — вони зараз особливо потрібні. Порції в другій половині — трохи більші, але не подвійні.",
+  dishes:[["Гречана каша з яйцем","сніданок","залізо + білок — база вагітності","★Fe ★Mg ★Б"],
+          ["Сирники з йогуртом і ягодами","сніданок","кальцій + білок","★Б"],
+          ["Запечена риба з картоплею","обід","риба — тільки добре приготована","★Б"],
+          ["Борщ із квасолею","обід","залізо + клітковина","★Fe"],
+          ["Легкий курячий суп","вечеря","коли нічого «не лізе»",""],
+          ["Йогурт із ягодами","перекус","кальцій у кишені","★Б"]],
+  imp:["Вітаміни (фолієва кислота, залізо, D та інші) — ТІЛЬКИ за призначенням лікаря: і склад, і дози.",
+       "Будь-які обмеження, «дієти», розвантаження під час вагітності — тільки з лікарем. За замовчуванням — ні.",
+       "Блювання, що не дає їсти й пити, — привід до лікаря одразу, це лікується.",
+       "Великих хижих риб (тунець тощо) — рідко: питання накопичення ртуті, обговори з лікарем."]},
+
+ post:{ hex:"#7A87A8", ic:"🌸", tag:"ВІДНОВЛЕННЯ, А НЕ «ФОРМА ДО ЛІТА»", name:"Після пологів",
+  pick:"енергія та відновлення, ГВ-дружньо",
+  essence:"Тіло щойно пробігло марафон. Мета зараз — відновлення і енергія, а не «повернути форму». Форма повернеться сама — слідом за ресурсом, а не замість нього.",
+  often:"білок і залізо (відновлення після крововтрати) · тепла проста їжа · вода багато (особливо при ГВ) · омега-3 (риба, олія, горіхи)",
+  some:"солодке — легально: сил мало, радість потрібна",
+  rare:"жорсткі дієти й обмеження — особливо при грудному вигодовуванні: б'ють і по молоку, і по настрою",
+  reg:["Їсти регулярно, навіть «однією рукою»: заготовки, нарізки, все просте",
+       "Пляшка води — біля кожного місця годування",
+       "Перекуси білкові, не тільки печиво: яйце, сир, йогурт",
+       "Проси про допомогу з готуванням — це теж турбота про дитину"],
+  plates:[["Сніданок",[25,35,40],"енергія на недоспаний день"],
+          ["Обід",[35,35,30],"білок + залізо обов'язково"],
+          ["Вечеря",[35,35,30],"тепла і повноцінна"]],
+  fat:"+ жири щодня — вони потрібні і тобі, і молоку (якщо годуєш).",
+  dishes:[["Вівсянка з бананом і горіхами","сніданок","готується за 5 хвилин","★Mg"],
+          ["Сочевичний суп-пюре","обід","залізо + білок, вариться каструлею на 2 дні","★Fe ★Б"],
+          ["Гречка з тушкованою печінкою","обід","чемпіон відновлення заліза","★Fe ★Б"],
+          ["Тушкована капуста з індичкою","вечеря","тепло і ситно","★Б"],
+          ["Варене яйце + огірок","перекус","їсться однією рукою 😉","★Б"],
+          ["Кефір із ягодами","перекус","вечірній варіант","★Б"]],
+  imp:["Зниження ваги — м'яко і не зараз: коли дозволить лікар і власний ресурс. При ГВ різкі обмеження — ні.",
+       "Волосся сиплеться після пологів — часте явище, але феритин перевірити варто (перелік Д7).",
+       "Пригнічений настрій ТИЖНЯМИ, сльози, «не відчуваю нічого» — це не «примхи». Це привід до лікаря: післяпологова депресія реальна і лікується.",
+       "Продукти «для лактації» з реклами — здебільшого міф: молоко робить прикладання + вода + їжа мами."]},
+
+ sick:{ hex:"#C9A45C", ic:"🍵", tag:"ПИТИ ВАЖЛИВІШЕ, НІЖ ЇСТИ", name:"Під час хвороби",
+  pick:"застуда, грип — що їсти, коли не хочеться",
+  essence:"Не змушуй себе їсти — змушуй себе пити. Знижений апетит під час гострої хвороби — нормальний механізм: тіло кидає сили на боротьбу, а не на травлення. Апетит повернеться.",
+  often:"рідина постійно: вода, компот, морс, теплий бульйон · легке за апетитом: суп, рідка каша, банан, йогурт · вітамін С з їжі (ківі, цитруси, смородина)",
+  some:"те, чого раптом захотілося: якщо тіло просить конкретного — дай",
+  rare:"важке, смажене, жирне — ШКТ зараз не до подвигів · алкоголь «для лікування» — міф, який заважає одужанню",
+  reg:["Маленькі порції строго за апетитом — без «треба поїсти для сил»",
+       "Пити — кожні пів години по кілька ковтків, навіть без спраги",
+       "Тепле приємніше і легше заходить: бульйон, чай, компот",
+       "Правил тарілки сьогодні немає — є суп і спокій"],
+  plates:null,
+  platesNote:"Сьогодні пропорції не діють: їж що і скільки просить тіло. Головна «тарілка» дня — чашка.",
+  fat:"",
+  dishes:[["Легкий курячий суп","будь-коли","класика не просто так: рідина + білок + тепло",""],
+          ["Гарбузовий крем-суп","будь-коли","м'який для горла і шлунка","★Mg"],
+          ["Рідка вівсянка","сніданок","коли твердого не хочеться",""],
+          ["Банан","перекус","м'яко, солодко, калій",""],
+          ["Йогурт","перекус","легкий білок без зусиль","★Б"],
+          ["Компот / морс","постійно","головна страва хворого дня",""]],
+  imp:["Немає апетиту 1–3 дні при застуді — нормально. Довше — до лікаря.",
+       "НЕ МОЖЕШ ПИТИ (усе повертається) — до лікаря сьогодні, не чекаючи: зневоднення небезпечне.",
+       "Висока температура тримається понад 3 дні або стан різко гіршає → лікар, без самолікування.",
+       "Вітамін С і цинк «ударними дозами» самостійно — ні: добавки під час хвороби теж через лікаря."]},
+
+ recov:{ hex:"#7C9082", ic:"🌱", tag:"БУДМАТЕРІАЛИ + НЕ КВАПИТИСЬ", name:"Відновлення після хвороби",
+  pick:"повернути сили після застуди, ковіду, операції",
+  essence:"Тіло щойно воювало — тепер воно ремонтує себе. Дай йому будматеріали (насамперед білок) і час. Підвищений апетит у ці тижні — нормальний: тіло добирає своє.",
+  often:"білок у КОЖЕН прийом — головний будматеріал · овочі та фрукти · ферментоване (йогурт, кефір, квашене) — особливо після антибіотиків, узгодь із лікарем · вода",
+  some:"усе звичне — повертається поступово, за апетитом",
+  rare:"«надолужити» спорт і дієту одразу — найчастіша помилка відновлення",
+  reg:["3 основні + 1–2 перекуси: тілу зараз треба більше, і це нормально",
+       "Повертай навантаження м'яко: спершу прогулянки, потім решта (сигнали «занадто» — Д17)",
+       "Сон — головні «ліки» цього періоду: лягай раніше без докорів",
+       "Апетит більший за звичайний 1–2 тижні — не лякайся і не обмежуй"],
+  plates:[["Сніданок",[25,40,35],"білок з самого ранку"],
+          ["Обід",[35,35,30],"повна тарілка — без «полегшень»"],
+          ["Вечеря",[35,40,25],"білок для нічного ремонту"]],
+  fat:"+ жири стабільно: олія, горіхи, риба — вони теж частина ремонту.",
+  dishes:[["Омлет зі шпинатом і сиром","сніданок","білок + залізо","★Б"],
+          ["Сирники з йогуртом","сніданок","м'яко і білково","★Б"],
+          ["Борщ із квасолею","обід","тепло + залізо + клітковина","★Fe"],
+          ["Запечена риба з картоплею","обід","легкий білок","★Б"],
+          ["Теплий салат із куркою","вечеря","овочі + білок","★Б"],
+          ["Йогурт із ягодами","перекус","підтримка мікрофлори","★Б"]],
+  imp:["Слабкість тримається понад 2–3 тижні після одужання → до лікаря: феритин, D, ЗАК — перелік уже є (Д7).",
+       "Після антибіотиків питання пробіотиків/ферментованого обговори з лікарем.",
+       "Після операцій режим харчування визначає лікар — цей екран лише доповнення."]},
+};
+
+const ORDER=["slim","gain","tone","preg","post","sick","recov"];
+const SHORT={slim:"Зниження",gain:"Набір",tone:"Рельєф",preg:"Вагітність",post:"Після пологів",sick:"Хвороба",recov:"Відновлення"};
+
+/* ---------- КВІТКА ---------- */
+(function(){
+  const g=document.getElementById("pf");
+  for(let i=0;i<7;i++){
+    const angle=i*(360/7)-90;
+    const p=document.createElementNS("http://www.w3.org/2000/svg","ellipse");
+    p.setAttribute("cx",60);p.setAttribute("cy",34);
+    p.setAttribute("rx",13);p.setAttribute("ry",25);
+    p.setAttribute("transform",`rotate(${angle+90} 60 60)`);
+    p.setAttribute("class","petal");
+    g.appendChild(p);
+  }
+})();
+
+/* ---------- СПИСОК ЦІЛЕЙ ---------- */
+const gl=document.getElementById("goalList");
+ORDER.forEach(k=>{
+  const g=GOALS[k];
+  const b=document.createElement("button");
+  b.className="goal-btn";
+  b.innerHTML=`<span class="g-dot" style="background:${g.hex}">${g.ic}</span>
+    <span><span class="g-name">${g.name}</span><br><span class="g-desc">${g.pick}</span></span>`;
+  b.onclick=()=>showGoal(k);
+  gl.appendChild(b);
+});
+
+/* ---------- НАВІГАЦІЯ ---------- */
+function go(id){
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0});
+}
+
+/* ---------- ЕКРАН МЕТИ ---------- */
+function showGoal(k){
+  const g=GOALS[k];
+  document.getElementById("hero").style.background=g.hex;
+  document.getElementById("gTag").textContent=g.tag;
+  document.getElementById("gName").textContent=g.name;
+  document.getElementById("gEssence").textContent=g.essence;
+  ["tFreq","tReg","tPlate","tDish"].forEach(id=>document.getElementById(id).style.color=g.hex);
+
+  document.getElementById("fOften").textContent=g.often;
+  document.getElementById("fSome").textContent=g.some;
+  document.getElementById("fRare").textContent=g.rare;
+
+  const reg=document.getElementById("gReg"); reg.innerHTML="";
+  g.reg.forEach(t=>reg.innerHTML+=`<div class="reg-item"><span class="b" style="background:${g.hex}"></span><span>${t}</span></div>`);
+
+  const pl=document.getElementById("gPlates"); pl.innerHTML="";
+  if(g.plates){
+    g.plates.forEach(([nm,parts,note])=>{
+      pl.innerHTML+=`<div class="plate">
+        <div class="plate-name"><span>${nm}</span><span>${note}</span></div>
+        <div class="bar">
+          <div class="veg" style="flex:${parts[0]}">${parts[0]}%</div>
+          <div class="prot" style="flex:${parts[1]}">${parts[1]}%</div>
+          <div class="carb" style="flex:${parts[2]}">${parts[2]}%</div>
+        </div></div>`;
+    });
+    document.querySelector(".legend").style.display="flex";
+  } else {
+    pl.innerHTML=`<div style="font-size:13px;color:var(--ink-soft)">${g.platesNote}</div>`;
+    document.querySelector(".legend").style.display="none";
+  }
+  document.getElementById("gFat").textContent=g.fat;
+
+  const dl=document.getElementById("gDishes"); dl.innerHTML="";
+  g.dishes.forEach(([name,meal,desc,badges])=>{
+    dl.innerHTML+=`<div class="dish"><div class="dish-top">
+      <span class="dish-name">${name}${badges?` <span style="color:var(--rose);font-size:11px">${badges}</span>`:""}</span>
+      <span class="dish-meal">${meal}</span></div>
+      <div class="dish-desc">${desc}</div></div>`;
+  });
+
+  const imp=document.getElementById("gImp"); imp.innerHTML="";
+  g.imp.forEach(t=>imp.innerHTML+=`<div class="li"><span>${t}</span></div>`);
+
+  const sw=document.getElementById("switcher"); sw.innerHTML="";
+  ORDER.forEach(kk=>{
+    const b=document.createElement("button");
+    b.className="sw"+(kk===k?" on":"");
+    if(kk===k){ b.style.background=GOALS[kk].hex; b.style.borderColor=GOALS[kk].hex; }
+    b.textContent=SHORT[kk];
+    b.onclick=()=>showGoal(kk);
+    sw.appendChild(b);
+  });
+  go("s-goal");
+}
+</script>
+</body>
+</html>
